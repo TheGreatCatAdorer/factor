@@ -33,7 +33,7 @@ pub fn generate_primes(size: u64) -> Vec<u64> {
                 let k = i * length + j;
                 if k > size { break; }
                 if k % prime != 0 {
-                    next_wheel.push(i);
+                    next_wheel.push(k);
                 }
             }
         }

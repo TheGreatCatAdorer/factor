@@ -41,5 +41,4 @@ fn main() {
             println!("{}", lcm(first, second));
         }
     }
-    println!("Hello, world!");
 }
