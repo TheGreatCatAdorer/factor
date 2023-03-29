@@ -59,7 +59,7 @@ pub fn generate_primes(size: u64) -> Vec<u64> {
 
 pub fn factor(mut i: u64, mut each: impl FnMut(u64)) {
     let mut primes = generate_primes(i).into_iter();
-    while i != 0 {
+    while i != 1 {
         let p = primes.next().unwrap();
         while i % p == 0 {
             i /= p;
