@@ -57,10 +57,10 @@ pub fn generate_primes(size: u64) -> Vec<u64> {
     wheel
 }
 
-pub fn factor(mut i: u64, mut each: impl FnMut(u64)) {
-    let mut primes = generate_primes(i).into_iter();
+pub fn factor<'a>(mut i: u64, primes: &'a [u64], mut each: impl FnMut(u64)) {
+    let mut primes = primes.iter();
     while i != 1 {
-        let p = primes.next().unwrap();
+        let &p = primes.next().unwrap();
         while i % p == 0 {
             i /= p;
             each(p);
@@ -68,9 +68,9 @@ pub fn factor(mut i: u64, mut each: impl FnMut(u64)) {
     }
 }
 
-pub fn factors(i: u64) -> Vec<u64> {
+pub fn factors<'a>(i: u64, primes: &'a [u64]) -> Vec<u64> {
     let mut result = vec![];
-    factor(i, |p| result.push(p));
+    factor(i, primes, |p| result.push(p));
     result
 }
 
