@@ -31,7 +31,9 @@ pub fn generate_primes(size: u64) -> Vec<u64> {
         for i in 0..prime {
             for &j in &wheel {
                 let k = i * length + j;
-                if k > size { break; }
+                if k > size {
+                    break;
+                }
                 if k % prime != 0 {
                     next_wheel.push(k);
                 }
@@ -43,18 +45,26 @@ pub fn generate_primes(size: u64) -> Vec<u64> {
         prime = wheel[1];
     }
     while prime * prime < size {
+        let max = (prime * prime * prime * prime).min(size);
+        let mut filters = wheel.iter();
+        filters.next(); // discard 1
+        let filters: Vec<_> = filters
+            .map_while(|&i| (i * i < max).then_some(i))
+            .collect();
         let mut next_wheel = vec![];
         for &i in &wheel {
-            if i % prime != 0 {
+            if filters.iter().all(|&j| i % j != 0) {
                 next_wheel.push(i);
             }
         }
         wheel = next_wheel;
-        result.push(prime);
         prime = wheel[1];
+        result.extend(filters.into_iter());
     }
-    wheel.splice(0..1, result);
-    wheel
+    let mut wheel = wheel.into_iter();
+    wheel.next();
+    result.extend(wheel);
+    result
 }
 
 pub fn factor<'a>(mut i: u64, primes: &'a [u64], mut each: impl FnMut(u64)) {
