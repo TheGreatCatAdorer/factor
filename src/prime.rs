@@ -45,12 +45,17 @@ pub fn generate_primes(size: u64) -> Vec<u64> {
         prime = wheel[1];
     }
     while prime * prime < size {
-        let max = (prime * prime * prime * prime).min(size);
         let mut filters = wheel.iter();
-        filters.next(); // discard 1
-        let filters: Vec<_> = filters
-            .map_while(|&i| (i * i < max).then_some(i))
-            .collect();
+        filters.next();
+        let filters: Vec<_> = match prime.checked_pow(4).map(|i| i.min(size)) {
+            Some(max) => filters.map_while(|&i| (i * i < max).then_some(i)).collect(),
+            None => {
+                let prime2 = prime.checked_mul(prime).expect("integer overflow!");
+                filters
+                    .map_while(|&i| (i < prime2 && i * i < size).then_some(i))
+                    .collect()
+            }
+        };
         let mut next_wheel = vec![];
         for &i in &wheel {
             if filters.iter().all(|&j| i % j != 0) {
